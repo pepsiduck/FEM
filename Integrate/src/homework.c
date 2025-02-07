@@ -2,15 +2,6 @@
 #include <math.h>
 #include "glfem.h"
 
-/*
-bruh:
-    sudo apt-get install xorg-dev libglu1-mesa-dev
-    mkdir -p build
-    cmake -B build -S .
-    cmake --build build
-    ./build/myFem
-*/
-
 double integrate(double x[3], double y[3], double (*f) (double, double))
 {
     double I = 0;
