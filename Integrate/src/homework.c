@@ -2,6 +2,11 @@
 #include <math.h>
 #include "glfem.h"
 
+double jacobien(double x[3], double y[3])
+{
+    return (x[1] - x[0])*(y[2] - y[0]) - (x[2] - x[0])*(y[1] - y[0]);
+}
+
 double integrate(double x[3], double y[3], double (*f) (double, double))
 {
     double I = 0;
@@ -19,7 +24,7 @@ double integrate(double x[3], double y[3], double (*f) (double, double))
 
     for(unsigned short int i = 0; i < 3; ++i)
         I += f(xLoc[i],yLoc[i]);
-    I *= 1.6667;
+    I *= 0.16667 * jacobien(x,y);
     
     glfemSetColor(GLFEM_BLACK); glfemDrawElement(x,y,3);
     glfemSetColor(GLFEM_BLUE);  glfemDrawNodes(x,y,3);
