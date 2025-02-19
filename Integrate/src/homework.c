@@ -4,7 +4,7 @@
 
 double jacobien(double x[3], double y[3])
 {
-    return (x[1] - x[0])*(y[2] - y[0]) - (x[2] - x[0])*(y[1] - y[0]);
+    return fabs((x[1] - x[0])*(y[2] - y[0]) - (x[2] - x[0])*(y[1] - y[0]));
 }
 
 double integrate(double x[3], double y[3], double (*f) (double, double))
@@ -61,17 +61,17 @@ double integrateRecursive(double x[3], double y[3], double (*f)(double,double), 
         //points des milieux des segments
 
 
-        double trx[3] = {x[0],x2[0],x2[2]}; 
-        double try[3] = {y[0],y2[0],y2[2]}; 
+        double tr1x[3] = {x[0],x2[0],x2[2]}; 
+        double tr1y[3] = {y[0],y2[0],y2[2]}; 
         I += integrateRecursive(tr1x,tr1y,f,n - 1);
-        trx[3] = {x2[0],x[1],x2[1]}; 
-        try[3] = {y2[0],y[1],y2[1]}; 
+        double tr2x[3] = {x2[0],x[1],x2[1]}; 
+        double tr2y[3] = {y2[0],y[1],y2[1]}; 
         I += integrateRecursive(tr2x,tr2y,f,n - 1);
-        trx[3] = {x2[2],x2[1],x[2]}; 
-        try[3] = {y2[2],y2[1],y[2]}; 
+        double tr3x[3] = {x2[2],x2[1],x[2]}; 
+        double tr3y[3] = {y2[2],y2[1],y[2]}; 
         I += integrateRecursive(tr3x,tr3y,f,n - 1);
-        trx[3] = {x2[0],x2[1],x2[2]}; 
-        try[3] = {y2[0],y2[1],y2[2]}; 
+        double tr4x[3] = {x2[0],x2[1],x2[2]}; 
+        double tr4y[3] = {y2[0],y2[1],y2[2]}; 
         I += integrateRecursive(tr4x,tr4y,f,n - 1);
 
         //somme des intégrales sur les 4 sous-triangles

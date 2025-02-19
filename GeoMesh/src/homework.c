@@ -1,6 +1,11 @@
 #include "fem.h"
 
 
+double f(double h_element, double h_reference, double d, double d_reference)
+{
+    double inverse = pow(d_reference,-3.0);
+    return h_element + d*d*(h_element - h_reference) * (2.0*d*inverse - 3.0*inverse*d_reference);
+}
 
 
 double geoSize(double x, double y){
@@ -21,18 +26,17 @@ double geoSize(double x, double y){
     double h1 = theGeometry->hHole;
     double d1 = theGeometry->dHole;
 
+    double distance0 = sqrt((x - x0)*(x - x0) + (y - y0)*(y - y0)) - r0;
+    double distance1 = sqrt((x - x1)*(x - x1) + (y - y1)*(y - y1)) - r1;
 
-//
-//     A modifier !
-//     
-// Your contribution starts here ....
-//
+    if(distance0 <= d0)
+        h = f(h0,h,distance0,d0);
+    if(distance1 <= d1)
+        h = fmin(h,f(h1,h,distance1,d1));
     
     return h;
     
-//   
-// Your contribution ends here :-)
-//
+
 
 }
 

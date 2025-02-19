@@ -42,7 +42,7 @@ int main(void)
     theGeometry->h       =  Lx * 0.1;    // 0.1 c'est plus joli :-)
     theGeometry->hHole   =  theGeometry->h * 0.2;
     theGeometry->hNotch  =  theGeometry->h * 0.05;
-    theGeometry->dHole   =  theGeometry->h * 1.0;
+    theGeometry->dHole   =  theGeometry->h * 4.0;
     theGeometry->dNotch  =  theGeometry->h * 4.0;
 
    

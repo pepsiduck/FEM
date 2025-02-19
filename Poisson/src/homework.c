@@ -48,7 +48,11 @@ void femPoissonFindBoundaryNodes(femPoissonProblem *theProblem)
 
 void femPoissonFree(femPoissonProblem *theProblem)
 {
-
+    geoMeshFree(theProblem->geo);
+    femDiscreteFree(theProblem->space);
+    femIntegrationFree(theProblem->rule);
+    femFullSystemFree(theProblem->system);
+    free(theProblem);
     // A completer :-)
 }
     

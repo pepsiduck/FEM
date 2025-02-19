@@ -18,14 +18,14 @@ int main(int argc, char* argv[])
 
     char   theMessage[256];
    
-    double x[3] = { 0, 1, 0};
+    double x[3] = { 1, 0, 0};
     double y[3] = { 0, 0, 1};
  
     glfemWindowCreate("EPL1110 : Integrate",480,480,3,x,y);
     do {
         glfemReshape(x,y,3);
 
-        double I = integrateRecursive(x,y,fun,2);
+        double I = integrateRecursive(x,y,stupid,2);
         sprintf(theMessage, "Integral = %14.7e",I); 
         glfemDrawMessage(theMessage,(double[2]){16.0, 30.0});
 
