@@ -2,6 +2,16 @@
 
 # ifndef NOPOISSONCREATE
 
+int isInArray(int *array, int size, int arg)
+{
+    for(int i = 0; i < size; ++i)
+    {
+        if(array[i] == arg)
+            return 1;
+    }
+    return 0;
+}
+
 femPoissonProblem *femPoissonCreate(const char *filename)
 {
     femGeo* theGeometry = geoMeshCreate(filename);
@@ -25,7 +35,7 @@ void femPoissonFindBoundaryNodes(femPoissonProblem *theProblem)
 {
     femGeo* theGeometry = theProblem->geo;  
     femMesh* theEdges = theGeometry->theEdges; 
-    int nBoundary = 0;
+    int nBoundary = theEdges->nElem;
     
     //  A completer :-)
 
@@ -36,9 +46,21 @@ void femPoissonFindBoundaryNodes(femPoissonProblem *theProblem)
     theGeometry->theDomains[theGeometry->nDomains-1] = theBoundary;
     theBoundary->nElem = nBoundary;
     theBoundary->elem = malloc(nBoundary*sizeof(int));
+    for(int i = 0; i < nBoundary; ++i)
+        theBoundary->elem[i] = -1;
     theBoundary->mesh = NULL;
     sprintf(theBoundary->name,"Boundary");
  
+    int j = 0;
+    for(int i = 0; i < nBoudary * 2; ++i)
+    {
+        if(!isInArray(theBoundary->elem,nBoundary,theEdges->elem[i]))
+        {
+            theBoundary->elem[j] = theEdges->elem[i];
+            ++j;
+        }
+    }
+
     // A completer :-)
 
 }
