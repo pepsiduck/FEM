@@ -39,7 +39,6 @@ void femPoissonFindBoundaryNodes(femPoissonProblem *theProblem)
     
     //  A completer :-)
 
-
     femDomain *theBoundary = malloc(sizeof(femDomain));
     theGeometry->nDomains++;
     theGeometry->theDomains = realloc(theGeometry->theDomains,theGeometry->nDomains*sizeof(femDomain*));
@@ -83,8 +82,15 @@ void femPoissonFree(femPoissonProblem *theProblem)
 
 void femPoissonLocal(femPoissonProblem *theProblem, const int iElem, int *map, double *x, double *y)
 {
-    femMesh *theMesh = theProblem->geo->theElements;
+    femMesh *theMesh = &(theProblem->geo->theElements[iElem]);
     
+    for(int i = 0; i < ((theProblem->geo->elementType == FEM_TRIANGLE) ? 3 : 4); ++i)
+    {
+        map[i] = theMesh->elem[i];
+        x[i] = theMesh->nodes->X[i];
+        y[i] = theMesh->nodes->Y[i];
+    }
+
     //  A completer :-)
 
 }
