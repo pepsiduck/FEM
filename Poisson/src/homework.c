@@ -82,13 +82,13 @@ void femPoissonFree(femPoissonProblem *theProblem)
 
 void femPoissonLocal(femPoissonProblem *theProblem, const int iElem, int *map, double *x, double *y)
 {
-    femMesh *theMesh = &(theProblem->geo->theElements[iElem]);
+    femMesh *theMesh = theProblem->geo->theElements;
     
-    for(int i = 0; i < ((theProblem->geo->elementType == FEM_TRIANGLE) ? 3 : 4); ++i)
+    for(int i = 0; i < theProblem->space.n; ++i)
     {
-        map[i] = theMesh->elem[i];
-        x[i] = theMesh->nodes->X[i];
-        y[i] = theMesh->nodes->Y[i];
+        map[i] = theMesh->elem[theProblem->space.n*iElem + i];
+        x[i] = theMesh->nodes->X[map[i]];
+        y[i] = theMesh->nodes->Y[map[i]];
     }
 
     //  A completer :-)
@@ -98,19 +98,91 @@ void femPoissonLocal(femPoissonProblem *theProblem, const int iElem, int *map, d
 # endif
 # ifndef NOPOISSONSOLVE
 
+double jacobian(double *x, double *y)
+{
+    return abs((x[1]-x[0])*(y[2]-y[0]) - (y[1]-y[0])*(x[2]-x[0]));
+}
+
+void matrixSolve(double **A, double *B, int size)
+{ 
+    int i, j, k;
+    /* Gauss elimination */
+    for (k=0; k < size; k++)
+    {
+        if (A[k][k] == 0) 
+            Error("zero pivot");
+        for (i = k+1 ; i < size; i++) 
+        {
+            factor = A[i][k] / A[k][k];
+            for (j = k+1 ; j < size; j++)
+                A[i][j] = A[i][j] - A[k][j] * factor;
+            B[i] = B[i] - B[k] * factor;
+        }
+    }
+    /* Back-substitution */
+    for (i = (size)-1; i >= 0 ; i--) 
+    {
+        factor = 0;
+        for (j = i+1 ; j < size; j++)
+            factor += A[i][j] * B[j];
+        B[i] = ( B[i] - factor)/A[i][i];
+    }
+}
+
 void femPoissonSolve(femPoissonProblem *theProblem)
 {
-
+    //Mesh contenant tout les points du problème + une liste reprenant les points contituants les triangle [tr11, tr12, tr13, tr21, ...]
     femMesh *theMesh = theProblem->geo->theElements;
+
+    //Ensemble contenant tous les neouds à la frontière
     femDomain *theBoundary = geoGetDomain(theProblem->geo,"Boundary");
+
+    //Matrice A et vecteur B
     femFullSystem *theSystem = theProblem->system;
+
+    //règle d'intégration
     femIntegration *theRule = theProblem->rule;
+
+    //3 pour triangles, 4 pour quads
     femDiscrete *theSpace = theProblem->space;
  
     if (theSpace->n > 4) Error("Unexpected discrete space size !");  
-    double x[4],y[4],phi[4],dphidxsi[4],dphideta[4],dphidx[4],dphidy[4];
-    int iElem,iInteg,iEdge,i,j,map[4];
-    int nLocal = theMesh->nLocalNode;
+            
+    //triangles
+    if (theSpace->n == 3)
+    {
+        for(int i = 0; i < theSystem->size; ++i)
+        {
+            for(int j = 0; j < theSystem->size; ++j)
+                theSystem->A[i][j] = 0;
+            theSystem->B[i][j] = 0;
+        }
+
+        double **Ae = (double *) malloc(3*sizeof(int*));
+        for(int i = 0; i < 3; ++i)
+            Ae[i] = (double *) malloc(3*sizeof(int*));
+        double *Be = malloc(3*sizeof(int));
+        int *map = (int *) malloc(3*sizeof(int));
+        double *x = (double *) malloc(3*sizeof(double));
+        double *y = (double *) malloc(3*sizeof(double));
+
+        double Je = 0.0;
+
+        for(int n = 0; n < theMesh->nElem; ++n)
+        {
+            femPoissonLocal(theProblem,n,map,x,y);
+            
+            Je = jacobian(x,y);
+        }
+    
+        for(int i = 0; i < 3; ++i)
+            free(Ae[i]);
+        free(Ae);
+        free(Be);
+        free(map);
+        free(x);
+        free(y);
+    }
 
     // A completer :-)
 }

@@ -40,10 +40,10 @@ int main(void)
     theGeometry->rNotch  =  Lx / 2.0;
     
     theGeometry->h       =  Lx * 0.1;    // 0.1 c'est plus joli :-)
-    theGeometry->hHole   =  theGeometry->h * 0.2;
-    theGeometry->hNotch  =  theGeometry->h * 0.05;
-    theGeometry->dHole   =  theGeometry->h * 4.0;
-    theGeometry->dNotch  =  theGeometry->h * 4.0;
+    theGeometry->hHole   =  theGeometry->h * 0.1;
+    theGeometry->hNotch  =  theGeometry->h * 0.1;
+    theGeometry->dHole   =  theGeometry->h * 10.0;
+    theGeometry->dNotch  =  theGeometry->h * 5.0;
 
    
     geoMeshGenerate();
